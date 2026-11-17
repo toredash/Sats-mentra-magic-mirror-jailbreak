@@ -79,6 +79,17 @@ Scripts contain placeholder paths such as `/path/to/work/` at the top: edit them
 3. Try newer Android with DSU first (no flash writes).
 4. Only then consider a permanent install, with a rollback slice cut from your verified backup and hash-checked against the live partition.
 
+## Another unit: notes from a macOS run (fork by Olsenius)
+
+[Olsenius](https://github.com/Olsenius) repeated the process on a second Rflex mirror from a Mac and kept detailed working notes (Norwegian) in his fork: **[notat.md](https://github.com/Olsenius/Sats-mentra-magic-mirror-jailbreak/blob/main/notat.md)**. Worth reading if you are not on Windows, or if you want a lighter way past the lock:
+
+- **macOS tooling:** `rkdeveloptool` built from source, the RK3399 loader assembled with Rockchip's `boot_merger` in Docker, no USB 2.0 hub needed. macOS must be allowed to connect the USB accessory (otherwise the mirror is invisible and looks like a dead cable), `ld` keeps showing Maskrom after the loader is up, and running `db` twice hangs (wrap commands in a timeout).
+- **Lock removal by renaming one file in `odm`:** instead of an overlay/whiteout, he changed only the directory entry `com.mentra.launcher.apk` to `com.mentra.launcher.off` in the `odm` image over maskrom (one sector written, read back and checked with `e2fsck -fn`), then wiped `userdata`. The mirror came up in stock Android without Mentra (a further cold boot had not been re-checked when the notes were written). On his unit `vbmeta` has no descriptors, so `odm` is not verity-protected. Check this on your own unit first.
+- **Android 13 built in Docker on the Mac**, tested with DSU before the permanent install, using his own hashes (the flash scripts in this repo carry this unit's hashes and must not be run unchanged).
+- He also found the wrong decimal `frp` start in `docs/partition-map.txt` (fixed 2026-11-17).
+
+His fork also has a slimmer boot hook with only the camera/audio fixes and a network keep-alive (`docs/scoped-media-and-network.md` in the fork).
+
 ## License
 
 Scripts and tools: MIT (see `LICENSE`). Text and documentation: CC BY-SA 4.0 (see `LICENSE-docs.md`). Third-party names, firmware and software remain the property of their owners.
